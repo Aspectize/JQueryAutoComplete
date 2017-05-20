@@ -1,22 +1,153 @@
 /* Aspectize JQueryAutoComplete extension */
 
 Aspectize.Extend("JQueryAutoComplete", {
-    Properties: { Value: null },
-    Events: ['OnValueChanged'],
+    Properties: { Value: '', Tag: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false },
+    Events: ['OnItemSelected', 'OnNeedData', 'OnTagChanged'],
     Init: function (elem) {
 
-	// Call UI widget initialisation        
+        var first = true;
+        var valuePropertyName = 'Value';
+
+        $(elem).autocomplete({
+            minLength: 0,
+            focus: function () {
+                // prevent value inserted on focus
+                return false;
+            }
+        });
+
+        function buildSeparatorSplit(s) {
+
+            var rx = new RegExp(s + '\\s*');
+
+            return function (v) { return v.split(rx); };
+        }
+
+        var split = buildSeparatorSplit(',');
+
+        function extractLast(term) {
+            return split(term).pop();
+        }
+
 
         Aspectize.UiExtensions.AddMergedPropertyChangeObserver(elem, function (sender, arg) {
 
-            if ('Value' in arg) {
-                // Update value in UI widget
+            var multiValue = Aspectize.UiExtensions.GetProperty(elem, 'MultiValue');
+            var fillSelected = Aspectize.UiExtensions.GetProperty(elem, 'FillSelected');
+            var custom = Aspectize.UiExtensions.GetProperty(elem, 'Custom');
+
+
+            var reInit = first ? true : false;
+            first = false;
+            for (var p in arg) {
+
+                switch (p) {
+
+                    case 'MultiValue':
+                    case 'Custom':
+                    case 'FillSelected': reInit = true; break;
+
+                    case valuePropertyName: $(sender).val(arg[p]); break;
+
+                    case 'MultiValueSeparator':
+
+                        split = buildSeparatorSplit(arg[p]);
+                        break;
+                }
             }
 
-        });
+            if (reInit) {
 
-        
+                var jqVersion = jQuery.fn.jquery;
+                var attribute = "autocomplete";
+
+                if (jqVersion >= "1.9") {
+                    attribute = "uiAutocomplete"; //ui-autocomplete ?
+                }               
+
+                var options = {
+                    source: function (request, response) {
+
+                        var termValue = multiValue ? extractLast(request.term) : request.term;
+
+                        var data = Aspectize.UiExtensions.ExecuteBoundCommand(elem, 'OnNeedData', { term: termValue });
+
+                        response(data);
+                    }
+                };
+
+                $(elem).on("blur", function (e) {
+
+                    var v = Aspectize.UiExtensions.GetProperty(elem, valuePropertyName);
+
+                    if (elem.value !== v) {
+
+                        if (custom || !elem.value) {
+
+                            Aspectize.UiExtensions.ChangeProperty(elem, valuePropertyName, elem.value);
+                            Aspectize.UiExtensions.ChangeProperty(elem, 'Tag', null);
+                            Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: true, Value: elem.value || null, Tag: null });
+
+                            if (!fillSelected) elem.value = '';
+
+                        } else elem.value = fillSelected ? v : '';
+                    }
+
+                });
+
+                if (multiValue) {
+                   
+                    options.select = function (event, ui) {
+
+                        if (fillSelected) {
+                            var currentValue = Aspectize.UiExtensions.GetProperty(elem, valuePropertyName);
+                            var terms = split(currentValue);
+                            // remove the current input
+                            terms.pop();
+                            terms.push(ui.item.label);
+
+                            // add placeholder to get the comma-and-space at the end
+                            terms.push("");
+                            var s = Aspectize.UiExtensions.GetProperty(elem, 'MultiValueSeparator') + ' ';
+
+                            var newValue = terms.join(s);
+                            Aspectize.UiExtensions.ChangeProperty(elem, valuePropertyName, newValue);
+                            $(elem).val(newValue);
+                            //event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: false, Value: ui.item.value });
+                        return false;
+                    };
+
+                } else {
+                    
+                    options.select = function (event, ui) {
+
+                        Aspectize.UiExtensions.ChangeProperty(elem, valuePropertyName, ui.item.label);
+                        Aspectize.UiExtensions.ChangeProperty(elem, 'Tag', ui.item.value);
+
+                        elem.value = fillSelected ? ui.item.label : '';
+
+                        Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: false, Value: ui.item.label, Tag: ui.item.value });
+                        return false;
+                    };
+                }
+
+                var ac = $(elem).autocomplete(options);
+
+                if (jqVersion >= "1.9") {
+                    ac.data(attribute)._renderItem = function (ul, item) {
+                        return $('<li class="ui-menu-item" role="presentation"></li>')
+                            .data("item.autocomplete", item)
+                            .append('<a><span class="' + item.type + '"></span>' + item.label + '</a>')
+                            .appendTo(ul);
+                    };
+                }
+            }
+        });
     }
 });
+
 
 
