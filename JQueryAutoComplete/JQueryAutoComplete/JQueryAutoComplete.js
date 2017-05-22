@@ -1,12 +1,12 @@
 /* Aspectize JQueryAutoComplete extension */
 
 Aspectize.Extend("JQueryAutoComplete", {
-    Properties: { Value: '', Tag: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false },
-    Events: ['OnItemSelected', 'OnNeedData', 'OnTagChanged'],
+    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false },
+    Events: ['OnItemSelected', 'OnNeedData', 'OnLabelChanged'],
     Init: function (elem) {
 
         var first = true;
-        var valuePropertyName = 'Value';
+        var labelPropertyName = 'Label';
 
         $(elem).autocomplete({
             minLength: 0,
@@ -47,7 +47,7 @@ Aspectize.Extend("JQueryAutoComplete", {
                     case 'Custom':
                     case 'FillSelected': reInit = true; break;
 
-                    case valuePropertyName: $(sender).val(arg[p]); break;
+                    case labelPropertyName: $(sender).val(arg[p]); break;
 
                     case 'MultiValueSeparator':
 
@@ -76,17 +76,25 @@ Aspectize.Extend("JQueryAutoComplete", {
                     }
                 };
 
-                $(elem).on("blur", function (e) {
+                $(elem).on("blur keyup", function (e) {
 
-                    var v = Aspectize.UiExtensions.GetProperty(elem, valuePropertyName);
+                    if (e.type === 'keyup') {
+                        if (e.keyCode === 13) {
+                            $(elem).autocomplete('close');
+                        } else return;
+                    }
+
+                    // blur or enter key (13)
+
+                    var v = Aspectize.UiExtensions.GetProperty(elem, labelPropertyName);
 
                     if (elem.value !== v) {
 
                         if (custom || !elem.value) {
 
-                            Aspectize.UiExtensions.ChangeProperty(elem, valuePropertyName, elem.value);
-                            Aspectize.UiExtensions.ChangeProperty(elem, 'Tag', null);
-                            Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: true, Value: elem.value || null, Tag: null });
+                            Aspectize.UiExtensions.ChangeProperty(elem, labelPropertyName, elem.value);
+                            Aspectize.UiExtensions.ChangeProperty(elem, 'Value', null);
+                            Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: true, Item: { label: elem.value, value: null } });
 
                             if (!fillSelected) elem.value = '';
 
@@ -100,7 +108,7 @@ Aspectize.Extend("JQueryAutoComplete", {
                     options.select = function (event, ui) {
 
                         if (fillSelected) {
-                            var currentValue = Aspectize.UiExtensions.GetProperty(elem, valuePropertyName);
+                            var currentValue = Aspectize.UiExtensions.GetProperty(elem, labelPropertyName);
                             var terms = split(currentValue);
                             // remove the current input
                             terms.pop();
@@ -111,12 +119,12 @@ Aspectize.Extend("JQueryAutoComplete", {
                             var s = Aspectize.UiExtensions.GetProperty(elem, 'MultiValueSeparator') + ' ';
 
                             var newValue = terms.join(s);
-                            Aspectize.UiExtensions.ChangeProperty(elem, valuePropertyName, newValue);
+                            Aspectize.UiExtensions.ChangeProperty(elem, labelPropertyName, newValue);
                             $(elem).val(newValue);
                             //event.preventDefault();
                             event.stopPropagation();
                         }
-                        Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: false, Value: ui.item.value });
+                        Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: false, Item: ui.item });
                         return false;
                     };
 
@@ -124,12 +132,12 @@ Aspectize.Extend("JQueryAutoComplete", {
                     
                     options.select = function (event, ui) {
 
-                        Aspectize.UiExtensions.ChangeProperty(elem, valuePropertyName, ui.item.label);
-                        Aspectize.UiExtensions.ChangeProperty(elem, 'Tag', ui.item.value);
+                        Aspectize.UiExtensions.ChangeProperty(elem, labelPropertyName, ui.item.label);
+                        Aspectize.UiExtensions.ChangeProperty(elem, 'Value', ui.item.value);
 
                         elem.value = fillSelected ? ui.item.label : '';
 
-                        Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: false, Value: ui.item.label, Tag: ui.item.value });
+                        Aspectize.UiExtensions.Notify(elem, 'OnItemSelected', { IsCustom: false, Item: ui.item });
                         return false;
                     };
                 }
