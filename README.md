@@ -47,11 +47,10 @@ The following properties are bindable (reference of properties are here: http://
 - Custom: allow to fill the input with entry not in the list. Default is false.
 
 The control has the following event:
-- OnItemSelected: Fired when an item of the list is selected. Receive 2 arguments: 
+- OnItemSelected: Fired when an item of the list is selected. Receive 1 arguments aasEventArgs with the following properties:
   - IsCustom: true or false depending of custom typing in the input
   - Item: the selected entry of the list
 - OnNeedData: specify wich command retreive the suggestion list. The command may be server side or client side.
-- OnLabelChanged: 
 
 c/ Retreive suggestion from server side
 
