@@ -63,4 +63,4 @@ The dictionary should contain the following keys for each element of the list:
 - label: the visible text of the element
 - value: the Id of the element
 - type: optional, is added as class attribute of the item in the list (usefull to add decoration icon in the list)
-Any other keys may be retrieve as custom properties of Item parameter in the OnItemSelected Command.
+- Any other keys may be retrieve as custom properties of Item parameter in the OnItemSelected Command.
