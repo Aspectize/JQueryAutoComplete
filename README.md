@@ -48,8 +48,8 @@ The following properties are bindable (reference of properties are here: http://
 
 The control has the following event:
 - OnItemSelected: Fired when an item of the list is selected. Receive 2 arguments: 
-  - IsCustom:
-  - Item: the selected entry
+  - IsCustom: true or false depending of custom typing in the input
+  - Item: the selected entry of the list
 - OnNeedData: specify wich command retreive the suggestion list. The command may be server side or client side.
 - OnLabelChanged: 
 
