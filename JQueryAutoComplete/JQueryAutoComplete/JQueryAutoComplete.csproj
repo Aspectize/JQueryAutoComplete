@@ -52,14 +52,6 @@
     <Content Include="JQueryAutoComplete.js" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AspectizeCore">
-      <HintPath>..\..\..\..\Delivery\Aspectize.core\AspectizeCore.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartBlocksCore">
-      <HintPath>..\..\..\..\Delivery\Aspectize.core\SmartBlocksCore.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
