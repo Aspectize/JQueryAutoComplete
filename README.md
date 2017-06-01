@@ -38,25 +38,31 @@ Insert the following html into your control:
     
 b/ Binding
 
-The following properties are bindable (reference of properties are here: http://www.bootstrap-switch.org/options.html):
+The following properties are bindable:
 - Label: can be bound to data to receive the label of the selected entry of the list.
 - Value: can be bound to data to receive the value of the selected entry of the list.
 - MultiValue: if true, multiple choices may be added into the input. Default is false.
 - MultiValueSeparator: if MultiValue, specify character used to separate values. Default is ','.
-- FillSelected: if true, the input is filled with the selected entry. if false, the input is cleared when an entry is selected. Default is true
-- Custom: allow to fill the input with entry not in the list. Default is false.
+- FillSelected: indicates if the input should be filled with the selected entry or cleared. Default is true.
+   - if true, the input is filled with the selected entry. 
+   - if false, the input is cleared when an entry is selected (usefull in case of search).
+- Custom: allow to fill the input with an entry not present in the list. Default is false.
 
 The control has the following event:
 - OnItemSelected: Fired when an item of the list is selected. Receive 1 arguments aasEventArgs with the following properties:
   - IsCustom: true or false depending of custom typing in the input
-  - Item: the selected entry of the list
-- OnNeedData: specify wich command retreive the suggestion list. The command may be server side or client side.
+  - Item: the selected entry of the list, which has a value and label property, and any other properties present in the dictionary returned by the command.
+- OnNeedData: specify wich command retreive the suggestion list. The command may be server side or client side, 
+indifferently.
 
 c/ Retreive suggestion from server side
 
-Your command should have the following signature:
+Your command should have the following signature: 
 
 Dictionary<string, object>[] SearchSuggestion(string term);
+
+The parameter term is mandatory, and should not be bound on the OnNeedData event.
+Any other parameter can be bound.
 
 The dictionary should contain the following keys for each element of the list:
 - label: the visible text of the element
