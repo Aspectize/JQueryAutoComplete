@@ -96,12 +96,12 @@ If you want to use font-awesome, the css should be:
    position: relative
 }
 
-.ui-menu-item .user:before {
+.ui-menu-item .male:before {
      font-family: FontAwesome;
      width: 16px;
      height: 16px;
      display: inline-block;
      margin-right: 2px;
-     content: "\f007"; /* code of font awesome icon: http://astronautweb.co/snippet/font-awesome/ */
+     content: "\f183"; /* code of font awesome icon: http://astronautweb.co/snippet/font-awesome/ */
  }
  ```
