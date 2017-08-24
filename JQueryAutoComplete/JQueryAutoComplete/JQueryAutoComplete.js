@@ -148,7 +148,7 @@ Aspectize.Extend("JQueryAutoComplete", {
                     ac.data(attribute)._renderItem = function (ul, item) {
                         return $('<li class="ui-menu-item" role="presentation"></li>')
                             .data("item.autocomplete", item)
-                            .append('<a><span class="' + item.type + '"></span>' + item.label + '</a>')
+                            .append('<a class="' + item.type + '">' + item.label + '</a>')
                             .appendTo(ul);
                     };
                 }
