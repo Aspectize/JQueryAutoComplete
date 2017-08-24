@@ -90,7 +90,7 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                     if (elem.value !== v) {
 
-                        if (custom || !elem.value) {
+                        if (custom || (!elem.value && fillSelected)) {
 
                             Aspectize.UiExtensions.ChangeProperty(elem, labelPropertyName, elem.value);
                             Aspectize.UiExtensions.ChangeProperty(elem, 'Value', null);
