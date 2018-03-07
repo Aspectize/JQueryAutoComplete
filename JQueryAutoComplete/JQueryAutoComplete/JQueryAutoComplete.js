@@ -146,9 +146,14 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                 if (jqVersion >= "1.9") {
                     ac.data(attribute)._renderItem = function (ul, item) {
+                        var linkValue = '<a class="' + item.type + '">' + item.label + '</a>';
+
+                        if (item.title) {
+                            linkValue = '<a class="' + item.type + ' title="' + item.title + '">' + item.label + '</a>';
+                        }
                         return $('<li class="ui-menu-item" role="presentation"></li>')
                             .data("item.autocomplete", item)
-                            .append('<a class="' + item.type + '">' + item.label + '</a>')
+                            .append(linkValue)
                             .appendTo(ul);
                     };
                 }
