@@ -53,6 +53,7 @@ The dictionary should contain the following keys for each element of the array:
 - label: the visible text of the element, displayed in the list
 - value: the Id of the element
 - type: optional, is added as class attribute of the item in the list (usefull to add decoration icon in the list)
+- title: optional, add title to list item
 - Any other keys may be retrieve as custom properties, and retreived in the Item parameter of the OnItemSelected Command.
 
 c/ Binding
@@ -74,4 +75,34 @@ The control has the following event:
 - OnNeedData: specify wich command retreive the suggestion list. The command may be server side or client side, 
 indifferently. the parameter term should not be bound.
 
+d/ Customize list apparence with css
 
+Each entry may have a custom class specified by the type property filled in the dictionary.
+You may add the following css to add an icon on each entry:
+
+```css
+.ui-menu-item .male {
+    background: rgba(0, 0, 0, 0) url("./Images/user_male16.png") no-repeat scroll 0 0;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+```
+If you want to use font-awesome, the css should be:
+
+```css
+.ui-menu-item .male {
+   position: relative
+}
+
+.ui-menu-item .male:before {
+     font-family: FontAwesome;
+     width: 16px;
+     height: 16px;
+     display: inline-block;
+     margin-right: 2px;
+     content: "\f183"; /* code of font awesome icon: http://astronautweb.co/snippet/font-awesome/ */
+ }
+ ```
