@@ -66,6 +66,7 @@ Aspectize.Extend("JQueryAutoComplete", {
                 }               
 
                 var options = {
+                    delay:300,
                     source: function (request, response) {
 
                         var termValue = multiValue ? extractLast(request.term) : request.term;
