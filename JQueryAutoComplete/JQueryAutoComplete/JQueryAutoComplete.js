@@ -66,6 +66,7 @@ Aspectize.Extend("JQueryAutoComplete", {
                 }               
 
                 var options = {
+                    position: { my: "left top", at: "left bottom", collision: "flipfit" },
                     delay:300,
                     source: function (request, response) {
 
