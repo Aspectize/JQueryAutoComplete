@@ -1,7 +1,7 @@
 /* Aspectize JQueryAutoComplete extension */
 
 Aspectize.Extend("JQueryAutoComplete", {
-    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false },
+    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false, AppendTo: null },
     Events: ['OnItemSelected', 'OnNeedData', 'OnLabelChanged'],
     Init: function (elem) {
 
@@ -67,6 +67,7 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                 var options = {
                     position: { my: "left top", at: "left bottom", collision: "flipfit" },
+                    appendTo: Aspectize.UiExtensions.GetProperty(elem, 'AppendTo'),
                     delay:300,
                     source: function (request, response) {
 
@@ -148,6 +149,8 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                 if (jqVersion >= "1.9") {
                     ac.data(attribute)._renderItem = function (ul, item) {
+                        item.type = item.type || '';
+
                         var linkValue = '<a class="' + item.type + '">' + item.label + '</a>';
 
                         if (item.title) {
