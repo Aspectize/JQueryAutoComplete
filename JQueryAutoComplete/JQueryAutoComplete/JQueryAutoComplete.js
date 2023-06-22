@@ -1,7 +1,7 @@
 /* Aspectize JQueryAutoComplete extension */
 
 Aspectize.Extend("JQueryAutoComplete", {
-    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false, AppendTo: null },
+    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false, AppendTo: null, MinLength: 1 },
     Events: ['OnItemSelected', 'OnNeedData', 'OnLabelChanged'],
     Init: function (elem) {
 
@@ -9,7 +9,6 @@ Aspectize.Extend("JQueryAutoComplete", {
         var labelPropertyName = 'Label';
 
         $(elem).autocomplete({
-            minLength: 0,
             focus: function () {
                 // prevent value inserted on focus
                 return false;
@@ -63,12 +62,13 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                 if (jqVersion >= "1.9") {
                     attribute = "uiAutocomplete"; //ui-autocomplete ?
-                }               
+                }
 
                 var options = {
+                    minLength: Aspectize.UiExtensions.GetProperty(elem, 'MinLength'),
                     position: { my: "left top", at: "left bottom", collision: "flipfit" },
                     appendTo: Aspectize.UiExtensions.GetProperty(elem, 'AppendTo'),
-                    delay:300,
+                    delay: 300,
                     source: function (request, response) {
 
                         var termValue = multiValue ? extractLast(request.term) : request.term;
@@ -101,13 +101,21 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                             if (!fillSelected) elem.value = '';
 
-                        } else elem.value = fillSelected ? v : '';
+                        } else {
+                            elem.value = fillSelected ? v : '';
+                            //$(elem).focus();
+                            //elem.dispatchEvent(new Event('change'));
+                            //elem.value = '';
+
+                            //$(elem).autocomplete('disable');
+                            //$(elem).autocomplete('enable');
+                        }
                     }
 
                 });
 
                 if (multiValue) {
-                   
+
                     options.select = function (event, ui) {
 
                         if (fillSelected) {
@@ -132,7 +140,7 @@ Aspectize.Extend("JQueryAutoComplete", {
                     };
 
                 } else {
-                    
+
                     options.select = function (event, ui) {
 
                         Aspectize.UiExtensions.ChangeProperty(elem, labelPropertyName, ui.item.label);
