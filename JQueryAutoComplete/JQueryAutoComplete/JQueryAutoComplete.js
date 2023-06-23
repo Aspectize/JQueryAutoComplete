@@ -1,7 +1,7 @@
 /* Aspectize JQueryAutoComplete extension */
 
 Aspectize.Extend("JQueryAutoComplete", {
-    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false, AppendTo: null, MinLength: 1 },
+    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false, AppendTo: null, MinLength: 1, ToolTip:'', PlaceHolder:'' },
     Events: ['OnItemSelected', 'OnNeedData', 'OnLabelChanged'],
     Init: function (elem) {
 
@@ -52,6 +52,8 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                         split = buildSeparatorSplit(arg[p]);
                         break;
+                    case 'ToolTip': elem.title = arg[p]; break;
+                    case 'PlaceHolder': elem.placeholder = arg[p]; break;
                 }
             }
 
