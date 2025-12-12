@@ -1,5 +1,33 @@
 /* Aspectize JQueryAutoComplete extension */
 
+function isCurrentVersionGreaterOrEqualThan (current, v) {
+
+    var cParts = current.split('.');
+    var cLength = cParts.length;
+    var vParts = v.split('.');
+    var vLength = vParts.length;
+
+
+    var cMaj = cLength > 0 ? +cParts[0] : 0;
+    var cMin = cLength > 1 ? +cParts[1] : 0;
+    var cBuild = cLength > 2 ? +cParts[2] : 0;
+
+    var vMaj   = vLength > 0 ? +vParts[0] : 0;
+    var vMin   = vLength > 1 ? +vParts[1] : 0;
+    var vBuild = vLength > 2 ? +vParts[2] : 0;
+
+    if(cMaj > vMaj) return true;
+    if(cMaj < vMaj) return false;
+
+    if(cMin > vMin) return true;
+    if(cMin < vMin) return false;
+
+    if(cBuild > vBuild) return true;
+    if(cBuild < vBuild) return false;
+
+    return true;
+}
+
 Aspectize.Extend("JQueryAutoComplete", {
     Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false, AppendTo: null, MinLength: 1, ToolTip:'', PlaceHolder:'' },
     Events: ['OnItemSelected', 'OnNeedData', 'OnLabelChanged'],
@@ -62,8 +90,8 @@ Aspectize.Extend("JQueryAutoComplete", {
                 var jqVersion = jQuery.fn.jquery;
                 var attribute = "autocomplete";
 
-                if (jqVersion >= "1.9") {
-                    attribute = "uiAutocomplete"; //ui-autocomplete ?
+                if (isCurrentVersionGreaterOrEqualThan(jQuery.ui.version, "1.9")) {
+                    attribute = "uiAutocomplete"; 
                 }
 
                 var options = {
@@ -157,7 +185,24 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                 var ac = $(elem).autocomplete(options);
 
-                if (jqVersion >= "1.9") {
+                if (isCurrentVersionGreaterOrEqualThan(jQuery.ui.version, "1.13")) {
+
+                    ac.data(attribute)._renderItem = function (ul, item) {
+                        item.type = item.type || '';
+
+                        var linkValue = '<div class="ui-menu-item-wrapper ' + item.type + '">' + item.label + '</div>';
+
+                        if (item.title) {
+                            linkValue = '<div class="ui-menu-item-wrapper ' + item.type + '" title="' + item.title + '">' + item.label + '</div>';
+                        }
+                        return $('<li class="ui-menu-item" role="presentation"></li>')
+                            .data("item.autocomplete", item)
+                            .append(linkValue)
+                            .appendTo(ul);
+                    };
+
+                } else if (isCurrentVersionGreaterOrEqualThan(jQuery.ui.version, "1.9")) {
+
                     ac.data(attribute)._renderItem = function (ul, item) {
                         item.type = item.type || '';
 
