@@ -1,6 +1,6 @@
 /* Aspectize JQueryAutoComplete extension */
 
-function isCurrentVersionGreaterOrEqualThan (current, v) {
+function isCurrentVersionGreaterOrEqualThan(current, v) {
 
     var cParts = current.split('.');
     var cLength = cParts.length;
@@ -12,24 +12,24 @@ function isCurrentVersionGreaterOrEqualThan (current, v) {
     var cMin = cLength > 1 ? +cParts[1] : 0;
     var cBuild = cLength > 2 ? +cParts[2] : 0;
 
-    var vMaj   = vLength > 0 ? +vParts[0] : 0;
-    var vMin   = vLength > 1 ? +vParts[1] : 0;
+    var vMaj = vLength > 0 ? +vParts[0] : 0;
+    var vMin = vLength > 1 ? +vParts[1] : 0;
     var vBuild = vLength > 2 ? +vParts[2] : 0;
 
-    if(cMaj > vMaj) return true;
-    if(cMaj < vMaj) return false;
+    if (cMaj > vMaj) return true;
+    if (cMaj < vMaj) return false;
 
-    if(cMin > vMin) return true;
-    if(cMin < vMin) return false;
+    if (cMin > vMin) return true;
+    if (cMin < vMin) return false;
 
-    if(cBuild > vBuild) return true;
-    if(cBuild < vBuild) return false;
+    if (cBuild > vBuild) return true;
+    if (cBuild < vBuild) return false;
 
     return true;
 }
 
 Aspectize.Extend("JQueryAutoComplete", {
-    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false, AppendTo: null, MinLength: 1, ToolTip:'', PlaceHolder:'' },
+    Properties: { Label: '', Value: null, MultiValue: false, MultiValueSeparator: ',', FillSelected: true, Custom: false, AppendTo: null, MinLength: 1, ToolTip: '', PlaceHolder: '', ZIndex: 1056, MaxHeight: 0 },
     Events: ['OnItemSelected', 'OnNeedData', 'OnLabelChanged'],
     Init: function (elem) {
 
@@ -37,11 +37,14 @@ Aspectize.Extend("JQueryAutoComplete", {
         var labelPropertyName = 'Label';
 
         $(elem).autocomplete({
+
             focus: function () {
+
                 // prevent value inserted on focus
                 return false;
             }
         });
+
 
         function buildSeparatorSplit(s) {
 
@@ -62,6 +65,8 @@ Aspectize.Extend("JQueryAutoComplete", {
             var multiValue = Aspectize.UiExtensions.GetProperty(elem, 'MultiValue');
             var fillSelected = Aspectize.UiExtensions.GetProperty(elem, 'FillSelected');
             var custom = Aspectize.UiExtensions.GetProperty(elem, 'Custom');
+            var zIndex = Aspectize.UiExtensions.GetProperty(elem, 'ZIndex');
+            var maxHeight = Aspectize.UiExtensions.GetProperty(elem, 'MaxHeight');
 
 
             var reInit = first ? true : false;
@@ -70,7 +75,10 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                 switch (p) {
 
+                    case 'ZIndex':
+                    case 'MaxHeight':
                     case 'MultiValue':
+                    case 'MinLength':
                     case 'Custom':
                     case 'FillSelected': reInit = true; break;
 
@@ -91,12 +99,12 @@ Aspectize.Extend("JQueryAutoComplete", {
                 var attribute = "autocomplete";
 
                 if (isCurrentVersionGreaterOrEqualThan(jQuery.ui.version, "1.9")) {
-                    attribute = "uiAutocomplete"; 
+                    attribute = "uiAutocomplete";
                 }
 
                 var options = {
                     minLength: Aspectize.UiExtensions.GetProperty(elem, 'MinLength'),
-                    position: { my: "left top", at: "left bottom", collision: "flipfit" },
+                    position: { my: "left top", at: "left bottom", collision: "none" },
                     appendTo: Aspectize.UiExtensions.GetProperty(elem, 'AppendTo'),
                     delay: 300,
                     source: function (request, response) {
@@ -106,6 +114,40 @@ Aspectize.Extend("JQueryAutoComplete", {
                         var data = Aspectize.UiExtensions.ExecuteBoundCommand(elem, 'OnNeedData', { term: termValue });
 
                         response(data);
+                    },
+
+                    open: function () {
+                        var autocomplete = $(elem).data("ui-autocomplete");
+                        var o = { zIndex: zIndex };
+                        if (maxHeight > 0) {
+
+                            o.maxHeight = maxHeight + "px";
+                            o.overflowY = "overflow";
+                            o.overflowX = "hidden";
+                        }
+                        autocomplete.menu.element.css(o);
+
+                        var input = $(elem);
+
+                        function repositionMenu() {
+                            var offset = input.offset();
+                            var height = input.outerHeight();
+                            autocomplete.menu.element.css({
+                                top: (offset.top + height) + "px",
+                                left: offset.left + "px"
+                            });
+                        }
+                        // Initial position
+                        repositionMenu();
+                        // Reposition on scroll
+                        $(window).on("scroll.autocomplete", repositionMenu);
+                        // Also handle scrolling in parent containers
+                        input.parents().on("scroll.autocomplete", repositionMenu);
+                    },
+                    close: function () {
+                        // Clean up scroll listeners
+                        $(window).off("scroll.autocomplete");
+                        $(elem).parents().off("scroll.autocomplete");
                     }
                 };
 
@@ -133,12 +175,6 @@ Aspectize.Extend("JQueryAutoComplete", {
 
                         } else {
                             elem.value = fillSelected ? v : '';
-                            //$(elem).focus();
-                            //elem.dispatchEvent(new Event('change'));
-                            //elem.value = '';
-
-                            //$(elem).autocomplete('disable');
-                            //$(elem).autocomplete('enable');
                         }
                     }
 
@@ -184,6 +220,12 @@ Aspectize.Extend("JQueryAutoComplete", {
                 }
 
                 var ac = $(elem).autocomplete(options);
+                if (options.minLength === 0) {
+                    ac.on('click', function () {
+
+                        $(elem).autocomplete("search", "");
+                    });
+                }
 
                 if (isCurrentVersionGreaterOrEqualThan(jQuery.ui.version, "1.13")) {
 

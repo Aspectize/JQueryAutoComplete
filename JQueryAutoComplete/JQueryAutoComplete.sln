@@ -8,13 +8,33 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		NET35|Any CPU = NET35|Any CPU
+		NET35|Mixed Platforms = NET35|Mixed Platforms
+		NET35|x64 = NET35|x64
+		NET35|x86 = NET35|x86
 		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.NET35|Any CPU.ActiveCfg = Release|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.NET35|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.NET35|x64.ActiveCfg = Release|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.NET35|x86.ActiveCfg = Release|Any CPU
 		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Release|x64.ActiveCfg = Release|Any CPU
+		{048C0F68-092B-440B-9DB6-E7F9CDC7F1DD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
